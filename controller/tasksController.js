@@ -19,7 +19,7 @@ const getAllTasks = async (req, res) => {
 };
 
 // Create Task Controller
-const createNewTask = asyncHandler(async (req, res) => {
+const createNewTask = async (req, res) => {
   const { user, areas, text } = req.body
 
   console.log("Received Data:", {user,areas,text})
@@ -36,7 +36,7 @@ const createNewTask = asyncHandler(async (req, res) => {
   } else {
     res.status(400).json({ message: "Invalid user data recieved" });
   }
-});
+};
 
 // Update Task Controller
 const updateTask = async (req, res) => {
