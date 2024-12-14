@@ -8,9 +8,9 @@ const errorHandler = require("./middleware/errorHandler");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const corsOptions = require("./config/corsOption");
-const PORT = process.env.PORT || 3500;
 const connectDB = require("./config/dbConn");
 const mongoose = require("mongoose");
+const PORT = process.env.PORT || 3500;
 
 console.log(process.env.NODE_ENV);
 

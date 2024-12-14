@@ -1,6 +1,7 @@
 {
   "name": "taskmanagerxapi",
-  "version": "1.0.0",
+  "version": "1.1.0",
+  "description": "MERN Stack project to help the user stay organized",
   "main": "server.js",
   "scripts": {
     "start": "node server",
@@ -9,7 +10,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "MERN Stack project to help the user stay organized",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",

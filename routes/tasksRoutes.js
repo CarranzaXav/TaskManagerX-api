@@ -13,6 +13,3 @@ router
   .delete(tasksController.deleteTask)
 
 module.exports = router
-
-
-  // .post((req,res) => {console.log('POST/tasks called', req.body); tasksController.createNewTask(req,res)})

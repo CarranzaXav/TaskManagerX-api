@@ -1,7 +1,6 @@
 const User = require("../models/User")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
-const asyncHandler = require("express-async-handler")
 
 // Token need to authenticate with JWT
 const user = {
@@ -20,8 +19,6 @@ const token = jwt.sign(
     process.env.ACCESS_TOKEN_SECRET,
     {expiresIn: '10m' }
 );
-
-console.log("Generated Token: ", token)
 
 // @desc login
 // @route POST /auth
@@ -60,14 +57,11 @@ const login = async (req,res) => {
         {expiresIn: '7d'}
     )
 
-    console.log("Access Token:", accessToken);
-    console.log("Refresh Token:", refreshToken);
-
     // Create secure cookie with refresh token
     res.cookie('jwt', refreshToken, {
         httpOnly: true, //accessible only by web server
         secure:  true, //https
-        sameSite: 'Lax', //cross-site cookie
+        sameSite: 'None', //cross-site cookie
         maxAge: 7*24*60*60*1000 //cookie expires: set to match refreshToken
     })
 
@@ -78,17 +72,14 @@ const login = async (req,res) => {
 //@desc Refresh
 //@route GET /auth/refresh
 //@access Public
-const refresh = async (req, res) => {
+const refresh = (req, res) => {
     const cookies = req.cookies
 
     if(!cookies?.jwt){
-        console.log("No cookie found")
         return res.status(401).json({message: 'Unauthorized'})
          }
 
     const refreshToken = cookies.jwt
-    console.log("Refresh Token:", refreshToken)
-
 
     try {
         // Verify the refresh token
@@ -143,26 +134,3 @@ module.exports = {
     refresh,
     logout
 }
-  
-  
-    // try {
-    //     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-    //     const newRefreshToken = jwt.sign({ username: decoded.username }, process.env.REFRESH_TOKEN_SECRET, {
-    //         expiresIn: '7d',
-    //     });
-
-    //     // Send the new refresh token in a cookie
-    //     res.cookie('jwt', newRefreshToken, {
-    //         httpOnly: true,
-    //         secure: false, // Enable for HTTPS
-    //         sameSite: 'Lax', // Use 'None' with HTTPS
-    //         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    //     });
-
-    //     res.json({
-    //         accessToken: newAccessToken,
-    //          message: 'Token refreshed' });
-    // } catch (error) {
-    //     console.error('Refresh token error:', error);
-    //     res.status(403).json({ message: 'Forbidden' });
-    // }

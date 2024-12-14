@@ -29,7 +29,7 @@ const forgotPwd = async (req, res) => {
             subject: "Reset Password",
             html: `<h1>Reset Your Password</h1>
             <p> Click on the following link to reset your password:</p>
-            <a href="http://localhost:3000/resetPwd/${token}">http://localhost:3000</a>
+            <a href="https://taskmanagerx.onrender.com/resetPwd/${token}">https://taskmanagerx.onrender.com/resetPwd/</a>
             <p>The link will expire in 10 minutes.</p>
             <p>If you didn't request a password reset, please ignore this email.</p>,`
         }

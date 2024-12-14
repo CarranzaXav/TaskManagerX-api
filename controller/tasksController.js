@@ -1,7 +1,5 @@
 const User = require("../models/User");
 const Task = require("../models/Task");
-const asyncHandler = require("express-async-handler");
-const bcrypt = require("bcrypt");
 
 const getAllTasks = async (req, res) => {
   const tasks = await Task.find().lean();
@@ -41,8 +39,9 @@ const createNewTask = asyncHandler(async (req, res) => {
 });
 
 // Update Task Controller
-const updateTask = asyncHandler(async (req, res) => {
+const updateTask = async (req, res) => {
   const { id, user, areas, text, completed } = req.body;
+
   if (!id || !user || !areas || !text || typeof completed !== "boolean") {
     return res.status(400).json({ message: "All fields required" });
   }
@@ -60,10 +59,10 @@ const updateTask = asyncHandler(async (req, res) => {
   const updateTask = await task.save();
 
   res.json({ message: `${updateTask.user} updated` });
-});
+};
 
 // Delete Task Controller
-const deleteTask = asyncHandler(async (req, res) => {
+const deleteTask = async (req, res) => {
   const { id } = req.body;
   if (!id) {
     return res.status(400).json({ message: "Task ID Required" });
@@ -79,7 +78,7 @@ const deleteTask = asyncHandler(async (req, res) => {
   const reply = `Task ${result.id} deleted`;
 
   res.json(reply);
-});
+};
 
 module.exports = {
   getAllTasks,
