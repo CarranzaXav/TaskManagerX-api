@@ -1,5 +1,5 @@
 const allowedOrigins = [
-"https://taskmananagerx.onrender.com",
+"https://taskmanagerx.onrender.com/"
 ];
 
 module.exports = allowedOrigins;
