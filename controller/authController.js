@@ -66,7 +66,7 @@ const login = async (req,res) => {
     })
 
     //Send accessToken containing username and roles
-    return res.json({accessToken})
+    res.json({accessToken})
 }
 
 //@desc Refresh
@@ -75,46 +75,34 @@ const login = async (req,res) => {
 const refresh = (req, res) => {
     const cookies = req.cookies
 
-    if(!cookies?.jwt){
-        return res.status(401).json({message: 'Unauthorized'})
-         }
+    if (!cookies?.jwt) return res.status(401).json({ message: 'Unauthorized' })
 
     const refreshToken = cookies.jwt
 
-    try {
-        // Verify the refresh token
-        const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    jwt.verify(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET,
+        async (err, decoded) => {
+            if (err) return res.status(403).json({ message: 'Forbidden' })
 
-        const username = decoded.username;
+            const foundUser = await User.findOne({ username: decoded.username }).exec()
 
-        // Generate a new access token
-        const newAccessToken = jwt.sign(
-            { username: username },
-            process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '15m' } // Adjust expiry as needed
-        );
+            if (!foundUser) return res.status(401).json({ message: 'Unauthorized' })
 
-        // Generate a new refresh token
-        const newRefreshToken = jwt.sign(
-            { username: username },
-            process.env.REFRESH_TOKEN_SECRET,
-            { expiresIn: '7d' } // Adjust expiry as needed
-        );
+            const accessToken = jwt.sign(
+                {
+                    "UserInfo": {
+                        "username": foundUser.username,
+                        "roles": foundUser.roles
+                    }
+                },
+                process.env.ACCESS_TOKEN_SECRET,
+                { expiresIn: '15m' }
+            )
 
-        // Send the new refresh token in a cookie
-        res.cookie('jwt', newRefreshToken, {
-            httpOnly: true,
-            secure: false, // Enable for HTTPS
-            sameSite: 'Lax', // Use 'None' with HTTPS
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-        });
-
-        // Respond with the new access token
-        res.json({ accessToken: newAccessToken, message: 'Token refreshed' });
-    } catch (error) {
-        console.error('Refresh token error:', error);
-        res.status(403).json({ message: 'Forbidden' });
-    }
+            res.json({ accessToken })
+        }
+    )
 }
 
 // @desc logout
