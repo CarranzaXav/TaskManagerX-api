@@ -66,7 +66,7 @@ const login = async (req,res) => {
     })
 
     //Send accessToken containing username and roles
-    res.json({accessToken})
+    return res.json({accessToken})
 }
 
 //@desc Refresh
@@ -86,8 +86,6 @@ const refresh = (req, res) => {
         const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
         const username = decoded.username;
-
-        // Optionally: Verify the user and refresh token in your database
 
         // Generate a new access token
         const newAccessToken = jwt.sign(
