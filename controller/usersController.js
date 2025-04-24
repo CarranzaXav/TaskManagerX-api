@@ -3,8 +3,7 @@ const Task = require("../models/Task");
 const bcrypt = require("bcrypt");
 
 const getAllUsers = async (req, res) => {
-
-  const users = await User.find().select("-password").lean()
+  const users = await User.find().select("-password").lean();
 
   if (!users?.length) {
     return res.status(400).json({ message: "No users found" });
@@ -20,7 +19,10 @@ const createNewUser = async (req, res) => {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  const duplicate = await User.findOne({ username }).collation({locale:'en', strength: 2}).lean().exec();
+  const duplicate = await User.findOne({ username })
+    .collation({ locale: "en", strength: 2 })
+    .lean()
+    .exec();
 
   if (duplicate) {
     return res.status(409).json({ message: "Duplicate username" });
@@ -28,9 +30,10 @@ const createNewUser = async (req, res) => {
 
   const hashedPwd = await bcrypt.hash(password, 10);
 
-  const userObject = (!Array.isArray(roles) || !roles.length) 
-  ? { username, "password": hashedPwd, email }
-  : { username, "password": hashedPwd, email, roles } //Double Check this
+  const userObject =
+    !Array.isArray(roles) || !roles.length
+      ? { username, password: hashedPwd, email }
+      : { username, password: hashedPwd, email, roles };
 
   const user = await User.create(userObject);
 
@@ -43,7 +46,6 @@ const createNewUser = async (req, res) => {
 
 //Update controller
 const updateUser = async (req, res) => {
-
   const { id, username, email, roles, active, password } = req.body;
   // Confirm data
   if (
@@ -54,7 +56,7 @@ const updateUser = async (req, res) => {
     !roles.length ||
     typeof active !== "boolean"
   ) {
-      console.log("Validation Failed: ", req.body)
+    console.log("Validation Failed: ", req.body);
     return res
       .status(400)
       .json({ message: "All fields except password required" });
@@ -67,7 +69,10 @@ const updateUser = async (req, res) => {
   }
 
   //Check for Duplicates
-  const duplicate = await User.findOne({ username }).collation({locale: 'en', strength: 2 }).lean().exec();
+  const duplicate = await User.findOne({ username })
+    .collation({ locale: "en", strength: 2 })
+    .lean()
+    .exec();
 
   // Allow updates to the original user
   if (duplicate && duplicate?._id.toString() !== id) {
@@ -105,7 +110,7 @@ const deleteUser = async (req, res) => {
   if (!user) {
     return res.status(400).json({ message: "User does not exist" });
   }
-  
+
   const result = await user.deleteOne();
 
   const reply = `Username ${result.username} with ID ${result._id} deleted`;
